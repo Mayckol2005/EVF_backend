@@ -2,6 +2,7 @@ package com.backend.tienda.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "detalles_orden")
@@ -17,6 +18,7 @@ public class DetalleOrden {
 
     @ManyToOne
     @JoinColumn(name = "orden_id")
+    @JsonIgnore
     private Orden orden;
 
     @ManyToOne

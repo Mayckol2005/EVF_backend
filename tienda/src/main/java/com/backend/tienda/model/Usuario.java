@@ -2,6 +2,7 @@ package com.backend.tienda.model;
 
 import jakarta.persistence.*;
 import lombok.Data; // Lombok genera getters/setters automáticos
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "usuarios")
@@ -25,6 +26,7 @@ public class Usuario {
     private String correo;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     private String direccion;

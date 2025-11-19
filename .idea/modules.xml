@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/tienda.iml" filepath="$PROJECT_DIR$/.idea/tienda.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/EVF_backend.iml" filepath="$PROJECT_DIR$/.idea/EVF_backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tienda/tienda.iml" filepath="$PROJECT_DIR$/tienda/tienda.iml" />
     </modules>
   </component>
 </project>
