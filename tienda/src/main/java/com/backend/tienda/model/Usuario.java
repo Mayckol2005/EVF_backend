@@ -1,8 +1,8 @@
 package com.backend.tienda.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty; // Importación necesaria
 import jakarta.persistence.*;
-import lombok.Data; // Lombok genera getters/setters automáticos
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 @Entity
 @Table(name = "usuarios")
@@ -26,14 +26,16 @@ public class Usuario {
     private String correo;
 
     @Column(nullable = false)
-    @JsonIgnore
+    // CORRECCIÓN AQUÍ:
+    // Usamos WRITE_ONLY en lugar de @JsonIgnore.
+    // Esto permite RECIBIR la contraseña en el registro, pero NO enviarla al frontend.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String direccion;
     private String region;
     private String comuna;
 
-    // Para manejar Roles (admin vs cliente)
-    // En tu frontend usas 'tipo': 'administrador' o 'cliente'
+    // Roles: 'administrador' o 'cliente'
     private String tipo;
 }

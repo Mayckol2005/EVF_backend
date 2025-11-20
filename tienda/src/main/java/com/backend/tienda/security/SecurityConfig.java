@@ -2,6 +2,7 @@ package com.backend.tienda.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // <--- IMPORTANTE: Nueva importación
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,25 +27,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS para que React se conecte
-                .csrf(csrf -> csrf.disable()) // Desactivar CSRF (común en APIs REST)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Login y Registro son públicos
-                        .requestMatchers("/api/productos/**").permitAll() // Ver productos es público
-                        .requestMatchers("/api/admin/**").authenticated() // Solo con token (luego validamos rol)
+                        // Rutas públicas de autenticación
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // --- CORRECCIÓN DE SEGURIDAD ---
+                        // Solo permitimos GET (Ver) productos públicamente.
+                        // POST, PUT y DELETE quedarán bloqueados por defecto.
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+
+                        // Documentación Swagger
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+
+                        // Rutas explícitamente protegidas (Admin)
+                        .requestMatchers("/api/admin/**").authenticated()
+
+                        // Todo lo demás (incluyendo crear productos) requiere autenticación
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No usar cookies de sesión
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Configuración CORS para permitir peticiones desde tu Frontend (localhost:3000)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Tu puerto de React
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
