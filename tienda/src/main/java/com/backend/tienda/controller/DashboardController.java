@@ -26,17 +26,13 @@ public class DashboardController {
     public ResponseEntity<?> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
 
-        // 1. Ventas Totales (Si es null, devolvemos 0)
         Long ventas = ordenRepository.sumarVentasTotales();
         stats.put("ventasTotales", ventas != null ? ventas : 0);
 
-        // 2. Cantidad de Boletas
         stats.put("totalBoletas", ordenRepository.count());
 
-        // 3. Cantidad de Clientes (Usuarios)
         stats.put("totalClientes", usuarioRepository.count());
 
-        // 4. Productos con Stock Crítico (La lista completa)
         stats.put("productosBajoStock", productoRepository.findLowStock());
 
         return ResponseEntity.ok(stats);
