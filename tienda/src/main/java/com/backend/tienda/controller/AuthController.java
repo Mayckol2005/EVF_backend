@@ -42,20 +42,16 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
     }
 
-    // Registro (Público y usado por el Admin actualmente)
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Usuario nuevoUsuario) {
         if (usuarioRepository.existsByCorreo(nuevoUsuario.getCorreo())) {
             return ResponseEntity.badRequest().body("El correo ya está registrado.");
         }
 
-        // Asignar rol por defecto si no viene
         if (nuevoUsuario.getTipo() == null) {
             nuevoUsuario.setTipo("cliente");
         }
 
-        // --- PROTECCIÓN EXTRA ---
-        // Si la contraseña viene vacía (por error del form), asignamos una default temporal
         if (nuevoUsuario.getPassword() == null || nuevoUsuario.getPassword().trim().isEmpty()) {
             nuevoUsuario.setPassword("123456");
         }
