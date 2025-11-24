@@ -51,29 +51,25 @@ class ProductoIntegrationTest {
         // 3. Borrar los Productos (ahora sí es seguro, nadie los referencia)
         productoRepository.deleteAll();
 
-        // --- CREACIÓN DE DATOS DE PRUEBA ---
         Producto p = new Producto();
         p.setName("Perfume Test");
         p.setBrand("Marca Test");
         p.setPrice(5000);
         p.setStock(100);
         p.setNormalPrice(6000);
-        // Asegúrate de llenar campos obligatorios si los hay en tu entidad
         productoRepository.save(p);
     }
 
     @Test
     void obtenerProductos_DebeRetornarLista() throws Exception {
-        // Prueba GET público
         mockMvc.perform(get("/api/productos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Perfume Test"));
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN") // Simulamos usuario Admin
+    @WithMockUser(roles = "ADMIN") 
     void crearProducto_ComoAdmin_DebeFuncionar() throws Exception {
-        // Prueba POST autenticado
         Producto nuevo = new Producto();
         nuevo.setName("Nuevo Perfume");
         nuevo.setBrand("Nueva Marca");
@@ -90,13 +86,12 @@ class ProductoIntegrationTest {
 
     @Test
     void crearProducto_SinAuth_DebeFallar() throws Exception {
-        // Prueba de seguridad: Intentar crear sin estar logueado
         Producto nuevo = new Producto();
         nuevo.setName("Intruso");
 
         mockMvc.perform(post("/api/productos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(nuevo)))
-                .andExpect(status().isForbidden()); // Esperamos 403 Forbidden
+                .andExpect(status().isForbidden()); 
     }
 }
