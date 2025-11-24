@@ -1,7 +1,7 @@
 package com.backend.tienda;
 
 import com.backend.tienda.model.Producto;
-import com.backend.tienda.repository.DetalleOrdenRepository; // <--- Importamos el repositorio de detalles
+import com.backend.tienda.repository.DetalleOrdenRepository; 
 import com.backend.tienda.repository.OrdenRepository;
 import com.backend.tienda.repository.ProductoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,24 +31,17 @@ class ProductoIntegrationTest {
     private OrdenRepository ordenRepository;
 
     @Autowired
-    private DetalleOrdenRepository detalleOrdenRepository; // <--- Inyectamos el repositorio
+    private DetalleOrdenRepository detalleOrdenRepository; 
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setup() {
-        // --- ESTRATEGIA DE LIMPIEZA SEGURA ---
-        // El orden es crítico para evitar errores de Clave Foránea (FK Constraints)
-
-        // 1. Borrar la tabla hija/intermedia (Detalles)
-        // Esto libera las referencias tanto a Órdenes como a Productos
         detalleOrdenRepository.deleteAll();
 
-        // 2. Borrar las Órdenes (padres de los detalles)
         ordenRepository.deleteAll();
 
-        // 3. Borrar los Productos (ahora sí es seguro, nadie los referencia)
         productoRepository.deleteAll();
 
         Producto p = new Producto();
