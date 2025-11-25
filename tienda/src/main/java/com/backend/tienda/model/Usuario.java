@@ -36,6 +36,5 @@ public class Usuario {
     private String region;
     private String comuna;
 
-    // Roles: 'administrador' o 'cliente'
     private String tipo;
 }
